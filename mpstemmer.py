@@ -11,16 +11,6 @@ kumpulan kata tak baku yang lazim ditemui
 """
 COMMON_INFORMAL = json.loads(open('./common_informal.json', 'r').read())
 
-
-def is_in_dict(kata):
-    idx = -1
-    try:
-        idx = KOSAKATA.index(kata)
-        return idx > -1
-    except:
-        return idx != -1
-
-
 def get_top_n_matching(kata, n):
     """
     Mencari n kata yang paling mirip dengan `kata`, diukur berdasarkan string edit distance
@@ -106,7 +96,7 @@ def stem_kata(kata):
         return res
 
     """ Lapis 1: cari di KBBI (eksak). """
-    if is_in_dict(res):
+    if res in KOSAKATA:
         return res
 
     """ Lapis 2: jika tidak ditemukan, ada kemungkinan kata masih terafiksasi. Lakukan stemming. """
