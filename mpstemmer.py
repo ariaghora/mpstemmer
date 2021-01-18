@@ -138,4 +138,14 @@ if __name__ == '__main__':
     print(f'           raw : {kalimat_raw}')
     print(f'hasil stemming : {kalimat_stem}')
 
+    print(csstemmer.stem('nilaiku', KOSAKATA))
+    print(csstemmer.stem('berai', KOSAKATA))
+    print(csstemmer.stem('bukankah', KOSAKATA))
+
+    print(csstemmer.stem('bercerita', KOSAKATA))
+    print(csstemmer.stem('berlarian', KOSAKATA))
+    print(csstemmer.stem('belajar', KOSAKATA))
     print(csstemmer.stem('beterbangan', KOSAKATA))
+
+    print(csstemmer.stem('terangkat', KOSAKATA))
+    print(csstemmer.stem('terundung', KOSAKATA))

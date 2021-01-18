@@ -6,6 +6,13 @@ Confix-stripping stemmer, Adriani et al., 2007
 
 VOWELS = 'aiueo'
 
+def is_vowel(c):
+    return c in VOWELS
+
+def is_consonant(c):
+    # faster than checking 21 other characters
+    return not(c in VOWELS)
+
 def is_in_dict(kata, kosakata):
     return kata in kosakata
 
@@ -44,10 +51,12 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
         return res 
 
     if (res[:2] in ['di', 'ke', 'se']) and (res[:2] != last_removed) and (n_removed_suffixes < 3):
+        # simple prefix, just remove it
         res = remove_prefixes(res[2:], kosakata, n_removed_suffixes + 1, res[:2])
+
     elif (res[:2] == 'be'):
         # rule 1: berV --> ber-V | be-rV
-        if (res[2] == 'r') and (res[3] in VOWELS):
+        if (res[2] == 'r') and is_vowel(res[3]):
             case1 = res[3:] # ber-V
             case2 = res[2:] # be-rV
             if is_in_dict(case1, kosakata):
@@ -57,11 +66,11 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
 
         # rule 2: berCAP... --> ber-CAP..., C != 'r', P != 'er'
         # C, A, P = res[3], res[4], res[5:7]
-        elif (res[2] == 'r') and (res[3] != 'r') and (not(res[3] in VOWELS)) and (res[5:7] != 'er'):
+        elif (res[2] == 'r') and (res[3] != 'r') and is_consonant(res[3]) and (res[5:7] != 'er'):
             res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:2])
 
         # rule 3: berCAerV... --> ber-CAerV..., C != 'r' (bercerita, bergerigi)        
-        elif (res[2] == 'r') and (res[3] != 'r') and (not(res[3] in VOWELS)):
+        elif (res[2] == 'r') and (res[3] != 'r') and is_consonant(res[3]):
             res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:2])
 
         # rule 4: belajar... --> bel-ajar...
@@ -69,8 +78,18 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
             res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:2])
 
         # rule 5: beC1erC... --> be-C1erC..., C1 != {'r'|'l'}  (beterbangan)
-        elif not(res[2] in ['r', 'l']) and (not(res[2] in VOWELS)) and (not(res[5] in VOWELS)):
+        elif not(res[2] in ['r', 'l']) and is_consonant(res[2]) and is_consonant(res[5]):
             res = remove_prefixes(res[2:], kosakata, n_removed_suffixes + 1, res[:2])
+    
+    elif (res[:2] == 'te'):
+        # rule 6: terV... --> ter-V... | te-rV... (terangkat | terundung)
+        if (res[2] == 'r') and is_vowel(res[3]):
+            case1 = res[3:] # ter-V
+            case2 = res[2:] # te-rV
+            if is_in_dict(case1, kosakata):
+                res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:2])
+            elif is_in_dict(case2, kosakata):
+                res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:2])
 
     return res
 
@@ -94,4 +113,5 @@ def stem(kata, kosakata):
         res = remove_inflectional_suffixes(kata, kosakata)
         res = remove_derivational_suffix(res, kosakata)
         res = remove_prefixes(res, kosakata, 0, '')
+    
     return res
