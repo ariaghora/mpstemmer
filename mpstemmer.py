@@ -1,5 +1,6 @@
 import json
 import editdistance
+import csstemmer
 
 """
 kumpulan kata dari KBBI daring
@@ -136,3 +137,5 @@ if __name__ == '__main__':
     kalimat_stem = stem_kalimat(kalimat_raw)
     print(f'           raw : {kalimat_raw}')
     print(f'hasil stemming : {kalimat_stem}')
+
+    print(csstemmer.stem('beterbangan', KOSAKATA))
