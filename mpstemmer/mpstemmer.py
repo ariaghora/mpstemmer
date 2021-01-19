@@ -1,25 +1,36 @@
+import sys
 import json
 import editdistance
-import csstemmer
 
-"""
-kumpulan kata dari KBBI daring. Gunakan set karena lebih cepat daripada list untuk method
-`__contains()__`.
-"""
-KOSAKATA = {kata.lower() for kata in open('kbbi_words.txt', 'r').read().split('\n')}
-
-KOSAKATA.remove('urang')
-KOSAKATA.remove('kukur')
-
-"""
-kumpulan kata tak baku yang lazim ditemui
-"""
-COMMON_INFORMAL = json.loads(open('./common_informal.json', 'r').read())
+from . import csstemmer
 
 
 class MPStemmer:
-    def __init__(self):
-        pass
+    def __init__(self, kosakata=None):
+        default_dict_path = sys.path[0] + '/mpstemmer/dictionaries/kbbi_words.txt'
+        common_informal_dict_path = sys.path[0] + '/mpstemmer/dictionaries/common_informal.json'
+
+        if kosakata == None:
+            wordlist = open(default_dict_path, 'r').read().split('\n')
+            self.kosakata = {
+                    kata.lower() for kata in wordlist
+                }
+
+            '''
+            Catatan kata ambigu:
+            -------------------
+            kurang -> urang, 
+            ukur -> kukur
+            
+            buang salah satunya atau perhitungkan konteks sekitar kata.
+            LoL, buang aja yang ngga sering muncul.
+            '''
+            self.kosakata.remove('urang')
+            self.kosakata.remove('kukur')
+        else:
+            self.kosakata = kosakata
+
+        self.common_informal_dict = json.loads(open(common_informal_dict_path, 'r').read())
 
     @staticmethod
     def get_top_n_matching(kata, n):
@@ -29,15 +40,14 @@ class MPStemmer:
         :param n: jumlah kata termirip yang dicari
         :return: `list` berisi `n` kata yang paling mirip dengan `kata`
         """
-        dists = [{'dist': editdistance.eval(kata, x), 'word': x} for x in KOSAKATA]
+        dists = [{'dist': editdistance.eval(kata, x), 'word': x} for x in self.kosakata]
         dists_sorted = sorted(dists, key=lambda x: x['dist'])
         return [x['word'] for x in dists_sorted[:n]]
 
     def get_top_1_matching(self, kata):
         return self.get_top_n_matching(kata, 1)[0]
 
-    @staticmethod
-    def fix_common(kata):
+    def fix_common(self, kata):
         """
         Bakukan kata tak baku yang lazim ditemui, seperti 'ngga' (tidak), 'bgt' (banget), dll.
         :param kata: kata yang akan diperbaiki
@@ -46,7 +56,7 @@ class MPStemmer:
         """
         res = kata
         fixed = False
-        abb_dict = COMMON_INFORMAL
+        abb_dict = self.common_informal_dict
         if kata in abb_dict.keys():
             res = abb_dict[kata]
             fixed = True
@@ -114,7 +124,7 @@ class MPStemmer:
             res = res[:-1]
         return res
 
-    def stem_kata(self, kata, kosakata, prioritize_standard=True, rigor=False):
+    def stem(self, kata, prioritize_standard=True, rigor=False):
         """
         :param kata: kata yang ingin dicari akarnya
         :param kosakata: Daftar kata dasar
@@ -131,15 +141,15 @@ class MPStemmer:
         """ 
         Lapis 1: cari di KBBI (eksak). 
         """
-        if res in KOSAKATA:
+        if res in self.kosakata:
             return res
 
         """
         Lapis 2: jalankan stemmer biasa, jika pengecekan kata baku diprioritaskan. 
         """
         if prioritize_standard:
-            res = csstemmer.stem(res, kosakata)
-            if res in KOSAKATA:
+            res = csstemmer.stem(res, self.kosakata)
+            if res in self.kosakata:
                 return res
 
         """ 
@@ -148,24 +158,24 @@ class MPStemmer:
         maybe_nonstandard = self.check_nonstandard_affixed(res)
         if maybe_nonstandard:
             res = self.fix_nonstandard_suffix(res)
-            if res in kosakata:
+            if res in self.kosakata:
                 return res
             res = self.fix_nonstandard_prefix(res)
-            if res in kosakata:
+            if res in self.kosakata:
                 return res
 
         """ 
         Lapis 4: Setelah lapis 3, ada kemungkinan kata masih terafiksasi. Lakukan stemming standar,
         karena afiksasi telah dibakukan di lapis 3. 
         """
-        res = csstemmer.stem(res, kosakata)
+        res = csstemmer.stem(res, self.kosakata)
 
         """ 
         Lapis 5: Hasil lapis 4 belum tentu memperoleh akar kata baku. Karena itu, jika sebelumnya kata telah
         terindikasi tidak baku, pastikan akar kata dibakukan. 
         """
         # if maybe_nonstandard:
-        res = self.ensure_standard_root(res, kosakata)
+        res = self.ensure_standard_root(res, self.kosakata)
 
         """ 
         Lapis 6: Opsional. Pencarian lebih detail melalui similarity search, jika hasil dari lapis 5 tak ditemukan 
@@ -204,37 +214,5 @@ if __name__ == '__main__':
     stemmer = MPStemmer()
 
     for kata in kata_uji:
-        print(f'{kata} -> {stemmer.stem_kata(kata, KOSAKATA)}')
+        print(f'{kata} -> {stemmer.stem(kata)}')
 
-    kata_uji_std = [
-        'nerjang', 'nuduh', 'nerima', 'negur', 'mukul',
-        'mimpin', 'nyoba', 'nyiram', 'nyuruh', 'nyimpen',
-        'nyebrang', 'nganggep', 'ngamuk', 'ngambil', 'ngebuka',
-        'ngebantu', 'ngelepas', 'kebayang', 'keinjek', 'kekabul',
-        'kepergok', 'ketipu', 'keulang', 'kewujud', 'critain',
-        'betulin', 'manjain', 'gangguin', 'gantian', 'ikutan',
-        'musuhan', 'sabunan', 'temenan', 'tukeran', 'nanyain',
-        'nunjukin', 'mentingin', 'megangin', 'nyelametin', 'nyempetin',
-        'ngorbanin', 'ngadepin', 'ngebuktiin', 'ngewarnain', 'kedengeran',
-        'ketemuan', 'beneran', 'ginian', 'kawinan', 'mainan',
-        'parkiran', 'duluan', 'gendutan', 'karatan', 'palingan',
-        'sabaran', 'kebagusan', 'sanaan', 'cepetan', 'sepagian'
-    ]
-
-    print('\n==================\n')
-
-    for kata in kata_uji_std:
-        try:
-            akar = stemmer.stem_kata(kata, KOSAKATA, rigor=False)
-            print(f'{kata} -> {akar}')
-        except:
-            print(f'error saat memroses `{kata}`')
-
-    '''
-    Catatan kata ambigu:
-    kurang -> urang, 
-    ukur -> kukur
-    
-    buang salah satunya atau perhitungkan konteks sekitar kata.
-    LoL, buang aja yang ngga sering muncul.
-    '''
