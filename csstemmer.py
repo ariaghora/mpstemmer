@@ -26,8 +26,10 @@ def remove_inflectional_suffixes(kata, kosakata):
 
     if res[-3:] in ['kah', 'lah', 'tah', 'pun', 'nya']:
         res = remove_inflectional_suffixes(res[:-3], kosakata)
+        # res = res[-3:]
     if res[-2:] in ['ku', 'mu']:
-        res = remove_inflectional_suffixes(res[:-2], kosakata)
+        # res = remove_inflectional_suffixes(res[:-2], kosakata)
+        res = res[:-2]
     return res
 
 
@@ -38,10 +40,13 @@ def remove_derivational_suffix(kata, kosakata):
 
     if res.endswith('i'):
         res = kata[:-1]
+        res = remove_derivational_suffix(res, kosakata)
     elif kata.endswith('kan'):
         res = kata[:-3]
+        res = remove_derivational_suffix(res, kosakata)
     elif kata.endswith('an'):
         res = kata[:-2]
+        res = remove_derivational_suffix(res, kosakata)
     return res
 
 
@@ -55,7 +60,7 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
         # simple prefix, just remove it
         res = remove_prefixes(res[2:], kosakata, n_removed_suffixes + 1, res[:2])
 
-    elif (res[:2] == 'be'):
+    elif res.startswith('be'):
         # rule 1: berV --> ber-V | be-rV
         if (res[2] == 'r') and is_vowel(res[3]):
             case1 = res[3:]  # ber-V
@@ -82,7 +87,7 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
         elif not (res[2] in ['r', 'l']) and is_consonant(res[2]) and is_consonant(res[5]):
             res = remove_prefixes(res[2:], kosakata, n_removed_suffixes + 1, res[:2])
 
-    elif (res[:2] == 'te'):
+    elif res.startswith('te'):
         # rule 6: terV... --> ter-V... | te-rV... (terangkat | terundung)
         if (res[2] == 'r') and is_vowel(res[3]):
             case1 = res[3:]  # ter-V
@@ -92,7 +97,36 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
             elif is_in_dict(case2, kosakata):
                 res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:2])
 
-    # TODO: lengkapi semua rules!
+    # TODO: lengkapi rule 7 - 9
+
+    elif res.startswith('me'):
+        # TODO: lengkapi rule 10 - 15
+
+        # TODO: jangan lupa ubah ke `elif`
+        # rule 16: meng{g|h|q|k}... --> meng-{g|h|q|k}...
+        if res.startswith(('mengg', 'mengh', 'mengq', 'mengk')):
+            res = remove_prefixes(res[5:], kosakata, n_removed_suffixes + 1, res[:2])
+
+        # rule 17:  mengV... --> meng-V... | meng-kV...
+        elif res.startswith('meng') and is_vowel(res[4]):
+            case1 = res[4:]  # meng-V
+            case2 = 'k' + res[4:]  # meng-kV
+            case3 = 'h' + res[4:]
+            # meng-hV --> tambahan sub-rule, untuk akomodasi konstruk tak baku: ngancurin -> mengancurin ->menghancurin
+            if is_in_dict(case1, kosakata):
+                res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:2])
+            elif is_in_dict(case2, kosakata):
+                res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:2])
+            elif is_in_dict(case3, kosakata):
+                res = remove_prefixes(case3, kosakata, n_removed_suffixes + 1, res[:2])
+
+        # rule 18: menyV... --> meny-sV...
+        elif res.startswith('meny') and is_vowel(res[4]):
+            res = 's' + res[4:]
+            res = remove_prefixes(res, kosakata, n_removed_suffixes + 1, res[:2])
+
+        # TODO: lengkapi rule 19 - 20
+        pass
 
     return res
 
@@ -104,7 +138,8 @@ def stem(kata, kosakata):
             (kata.startswith('be') and kata.endswith('i')) or
             (kata.startswith('be') and kata.endswith('lah')) or
             (kata.startswith('be') and kata.endswith('an')) or
-            (kata.startswith('me') and kata.endswith('i')) or
+            # (kata.startswith('me') and kata.endswith('i')) or
+            (kata.startswith('me') and kata.endswith('ku')) or
             (kata.startswith('di') and kata.endswith('i')) or
             (kata.startswith('pe') and kata.endswith('i')) or
             (kata.startswith('te') and kata.endswith('i'))

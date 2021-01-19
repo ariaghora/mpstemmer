@@ -8,6 +8,9 @@ kumpulan kata dari KBBI daring. Gunakan set karena lebih cepat daripada list unt
 """
 KOSAKATA = {kata.lower() for kata in open('kbbi_words.txt', 'r').read().split('\n')}
 
+KOSAKATA.remove('urang')
+KOSAKATA.remove('kukur')
+
 """
 kumpulan kata tak baku yang lazim ditemui
 """
@@ -98,7 +101,10 @@ def fix_nonstandard_prefix(kata):
     """
     res = kata
     if res.startswith(('m', 'n', 'ng', 'ny')):
-        res = 'me' + res
+        if res.startswith('nge') and not (res[3] in ['m', 'n']):
+            res = res[3:]
+        else:
+            res = 'me' + res
 
     return res
 
@@ -113,12 +119,20 @@ def fix_nonstandard_suffix(kata):
     return res
 
 
-def stem_kata(kata, kosakata, rigor=False):
+def stem_kata(kata, kosakata, prioritize_standard=True, rigor=False):
     """
-    :param kata: kata tak baku.
-    :return: kata yang dibakukan.
+
+    :param kata: kata yang ingin dicari akarnya
+    :param kosakata: Daftar kata dasar
+    :param prioritize_standard: Berguna untuk artikel dengan mayoritas kata baku, seperti teks berita, tulisan ilmiah, dll.
+    :param rigor: Jika hasil akhir tidak dapat ditemukan di kosakata, cari kata terdekat lebih detail
+    :return: akar kata
     """
     res = kata
+
+    res, fixed = fix_common(res)
+    if fixed:
+        return res
 
     """ 
     Lapis 1: cari di KBBI (eksak). 
@@ -126,8 +140,16 @@ def stem_kata(kata, kosakata, rigor=False):
     if res in KOSAKATA:
         return res
 
+    """
+    Lapis 2: jalankan stemmer biasa, jika pengecekan kata baku diprioritaskan. 
+    """
+    if prioritize_standard:
+        res = csstemmer.stem(res, kosakata)
+        if res in KOSAKATA:
+            return res
+
     """ 
-    Lapis 2: cek kemungkinan kata tak baku terafiksasi. Jika ya, bakukan afiksasi.
+    Lapis 3: cek kemungkinan kata tak baku terafiksasi. Jika ya, bakukan afiksasi.
     """
     maybe_nonstandard = check_nonstandard_affixed(res)
     if maybe_nonstandard:
@@ -139,20 +161,21 @@ def stem_kata(kata, kosakata, rigor=False):
             return res
 
     """ 
-    Lapis 3: Setelah lapis 2, ada kemungkinan kata masih terafiksasi. Lakukan stemming standar,
-    karena afiksasi telah dibakukan di lapis 2. 
+    Lapis 4: Setelah lapis 3, ada kemungkinan kata masih terafiksasi. Lakukan stemming standar,
+    karena afiksasi telah dibakukan di lapis 3. 
     """
     res = csstemmer.stem(res, kosakata)
 
     """ 
-    Lapis 4: Hasil lapis 3 belum tentu memperoleh akar kata baku. Karena itu, jika sebelumnya kata telah
+    Lapis 5: Hasil lapis 4 belum tentu memperoleh akar kata baku. Karena itu, jika sebelumnya kata telah
     terindikasi tidak baku, pastikan akar kata dibakukan. 
     """
     if maybe_nonstandard:
         res = ensure_standard_root(res, kosakata)
 
     """ 
-    Lapis 5: Opsional. Pencarian lebih detail melalui similarity search. 
+    Lapis 6: Opsional. Pencarian lebih detail melalui similarity search, jika hasil dari lapis 5 tak ditemukan 
+    di kosakata. 
     PERINGATAN!!! Ini bisa memakan banyak waktu. 
     """
     if rigor:
@@ -175,29 +198,23 @@ def stem_kalimat(kalimat, kosakata):
 
 
 if __name__ == '__main__':
-    kalimat_raw = 'ngerampok tuh dosa bang, apa ga takut?'
-    kalimat_stem = stem_kalimat(kalimat_raw, KOSAKATA)
-    print(f'           raw : {kalimat_raw}')
-    print(f'hasil stemming : {kalimat_stem}')
+    kata_uji = [
+        'nilaiku', 'berai', 'bukankah', 'bercerita', 'berlarian', 'belajar', 'beterbangan',  # be-
+        'terangkat', 'terundung',  # te-
+        'mengasihani',  # me-
 
-    kalimat_raw = 'ngelupain mantan tuh nggak sulit kok'
-    kalimat_stem = stem_kalimat(kalimat_raw, KOSAKATA)
-    print(f'           raw : {kalimat_raw}')
-    print(f'hasil stemming : {kalimat_stem}')
+        # tak baku
+        'ngancem', 'nyesel', 'ngelurusin', 'ngurangi', 'ngalamin', 'ngenes', 'ngancurin', 'ngakuin'
+    ]
 
-    print(stem_kata('nilaiku', KOSAKATA))
-    print(stem_kata('berai', KOSAKATA))
-    print(stem_kata('bukankah', KOSAKATA))
+    for kata in kata_uji:
+        print(f'{kata} -> {stem_kata(kata, KOSAKATA)}')
 
-    print(stem_kata('bercerita', KOSAKATA))
-    print(stem_kata('berlarian', KOSAKATA))
-    print(stem_kata('belajar', KOSAKATA))
-    print(stem_kata('beterbangan', KOSAKATA))
-
-    print(stem_kata('terangkat', KOSAKATA))
-    print(stem_kata('terundung', KOSAKATA))
-
-    print(stem_kata('kuberesin', KOSAKATA))
-    print(stem_kata('ngancem', KOSAKATA))
-    print(stem_kata('nyesel', KOSAKATA))
-    print(stem_kata('ngelurusin', KOSAKATA))
+    '''
+    Catatan kata ambigu:
+    kurang -> urang, 
+    ukur -> kukur
+    
+    buang salah satunya atau perhitungkan konteks sekitar kata.
+    LoL, buang aja yang ngga sering muncul.
+    '''
