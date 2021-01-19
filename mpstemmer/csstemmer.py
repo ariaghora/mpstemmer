@@ -21,7 +21,7 @@ def is_in_dict(kata, kosakata):
 def remove_inflectional_suffixes(kata, kosakata):
     res = kata
 
-    if is_in_dict(res, kosakata):
+    if is_in_dict(res, kosakata) or (len(res) <= 5):
         return res
 
     if res[-3:] in ['kah', 'lah', 'tah', 'pun', 'nya']:
@@ -35,7 +35,7 @@ def remove_inflectional_suffixes(kata, kosakata):
 
 def remove_derivational_suffix(kata, kosakata):
     res = kata
-    if is_in_dict(res, kosakata):
+    if is_in_dict(res, kosakata) or (len(res) <= 5):
         return res
 
     if res.endswith('i'):
@@ -53,7 +53,7 @@ def remove_derivational_suffix(kata, kosakata):
 def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
     res = kata
     # base case
-    if is_in_dict(res, kosakata):
+    if (is_in_dict(res, kosakata)) or (len(res) <= 5):
         return res
 
     if (res[:2] in ['di', 'ke', 'se', 'ku']) and (res[:2] != last_removed) and (n_removed_suffixes < 3):
@@ -119,7 +119,7 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
 
         # rule 14:  men{c|d|j|z}... --> men-{c|d|j|z}...
         elif res.startswith(('menc', 'mend', 'menj', 'menz')):
-            pass
+            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:2])
 
         # rule 15: menV... --> me-nV... | me-tV...
         elif res.startswith('men') and is_vowel(res[3]):
@@ -139,6 +139,9 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
             case1 = res[4:]  # meng-V
             case2 = 'k' + res[4:]  # meng-kV
             case3 = 'h' + res[4:]
+
+            # TODO: Add more cases, with ensured standard word
+
             # meng-hV --> tambahan sub-rule, untuk akomodasi konstruk tak baku: ngancurin -> mengancurin ->menghancurin
             if is_in_dict(case1, kosakata):
                 res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:2])

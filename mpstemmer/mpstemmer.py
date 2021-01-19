@@ -27,10 +27,13 @@ class MPStemmer:
             buang salah satunya atau perhitungkan konteks sekitar kata.
             LoL, buang aja yang ngga sering muncul.
             '''
-            self.kosakata.remove('urang')
+            self.kosakata.remove('adap')
             self.kosakata.remove('kukur')
             self.kosakata.remove('ketemu')
             self.kosakata.remove('kesohor')
+            self.kosakata.remove('soba')
+            self.kosakata.remove('urang')
+            self.kosakata.remove('urita')
         else:
             self.kosakata = kosakata
 
@@ -63,6 +66,8 @@ class MPStemmer:
         if kata in abb_dict.keys():
             res = abb_dict[kata]
             fixed = True
+            return res, fixed
+        
         return res, fixed
 
     @staticmethod
@@ -100,6 +105,12 @@ class MPStemmer:
                 res = case2
         return res
 
+    def standardify(self, kata):
+        res = kata
+        if (res[-1] in ['p']) and (res[-2] == 'e'):
+            res = res[:-2] + 'a' + res[-1:]
+        return res
+
     @staticmethod
     def fix_nonstandard_prefix(kata):
         """
@@ -115,8 +126,13 @@ class MPStemmer:
                 res = res[3:]
             else:
                 res = 'me' + res
+
         elif res.startswith('ke'):
             res = res[2:]
+
+        elif res.startswith(('gini', 'gitu')):
+            res = 'be' + res
+
         return res
 
     @staticmethod
@@ -124,9 +140,9 @@ class MPStemmer:
         res = kata
         # buang suffix sederhana
         if res.endswith('in'):
-            res = res[:-2]
-        elif res.endswith('i'):
-            res = res[:-1]
+            res = res[:-2] 
+        # elif res.endswith('i'):
+        #     res = res[:-1]
         return res
 
     def stem(self, kata, prioritize_standard=True, rigor=False):
@@ -173,6 +189,7 @@ class MPStemmer:
         Lapis 4: Setelah lapis 3, ada kemungkinan kata masih terafiksasi. Lakukan stemming standar,
         karena afiksasi telah dibakukan di lapis 3. 
         """
+        res = self.standardify(res)
         res = csstemmer.stem(res, self.kosakata)
 
         """ 
