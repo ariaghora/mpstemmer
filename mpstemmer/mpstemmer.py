@@ -29,13 +29,14 @@ class MPStemmer:
             '''
             self.kosakata.remove('urang')
             self.kosakata.remove('kukur')
+            self.kosakata.remove('ketemu')
+            self.kosakata.remove('kesohor')
         else:
             self.kosakata = kosakata
 
         self.common_informal_dict = json.loads(open(common_informal_dict_path, 'r').read())
 
-    @staticmethod
-    def get_top_n_matching(kata, n):
+    def get_top_n_matching(self, kata, n):
         """
         Mencari n kata yang paling mirip dengan `kata`, diukur berdasarkan string edit distance
         :param kata: kata kunci pencarian
@@ -114,6 +115,8 @@ class MPStemmer:
                 res = res[3:]
             else:
                 res = 'me' + res
+        elif res.startswith('ke'):
+            res = res[2:]
         return res
 
     @staticmethod
@@ -184,12 +187,12 @@ class MPStemmer:
         di kosakata. 
         PERINGATAN!!! Ini bisa memakan banyak waktu. 
         """
-        if rigor:
+        if rigor and maybe_nonstandard:
             res = self.get_top_1_matching(res)
 
         return res
 
-    def stem_kalimat(self, kalimat, kosakata):
+    def stem_kalimat(self, kalimat):
         """
         :param kalimat: Kalimat (baris kata terpisah spasi) yang akan dibakukan.
         Sementara ini, karakter non-alfanumerik akan dihilangkan.
@@ -197,8 +200,19 @@ class MPStemmer:
         """
         res = []
         words = kalimat.split(' ')
+
+        """
+        memoization untuk mempercepat pemrosesan kata yang sebelumnya
+        pernah diproses
+        """
+        memo = {}
         for kata in words:
-            res.append(self.stem_kata(kata, kosakata))
+            if not(kata in memo):
+                root = self.stem(kata)
+                memo[kata] = root
+            else:
+                root = memo[kata]
+            res.append(root)
         return ' '.join(res)
 
 
@@ -217,4 +231,5 @@ if __name__ == '__main__':
 
     for kata in kata_uji:
         print(f'{kata} -> {stemmer.stem(kata)}')
+
 

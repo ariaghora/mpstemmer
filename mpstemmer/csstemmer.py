@@ -175,6 +175,7 @@ def stem(kata, kosakata):
             (kata.startswith('me') and kata.endswith('i')) or
             (kata.startswith('me') and kata.endswith('ku')) or
             (kata.startswith('di') and kata.endswith('i')) or
+            (kata.startswith('se') and kata.endswith('an')) or
             (kata.startswith('pe') and kata.endswith('i')) or
             (kata.startswith('te') and kata.endswith('i'))
     ):
