@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 import editdistance
@@ -7,8 +8,9 @@ from . import csstemmer
 
 class MPStemmer:
     def __init__(self, kosakata=None):
-        default_dict_path = sys.path[0] + '/mpstemmer/dictionaries/kbbi_words.txt'
-        common_informal_dict_path = sys.path[0] + '/mpstemmer/dictionaries/common_informal.json'
+        path = os.path.dirname(__file__)
+        default_dict_path = path + '/dictionaries/kbbi_words.txt'
+        common_informal_dict_path = path + '/dictionaries/common_informal.json'
 
         if kosakata == None:
             wordlist = open(default_dict_path, 'r').read().split('\n')
