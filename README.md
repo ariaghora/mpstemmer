@@ -15,6 +15,9 @@ print(stemmer.stem('mengemudi')) # => kemudi
 print(stemmer.stem('belajar')) # => ajar
 print(stemmer.stem('ngelepas')) # => lepas
 print(stemmer.stem('kebayang')) # => bayang
+
+print(stemmer.stem_kalimat('ngelupain mantan tuh ngga susah kok bro'))
+# => lupa mantan itu tidak susah kok bro
 ```
 
 ## Reference
