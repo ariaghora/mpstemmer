@@ -100,11 +100,15 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
     # TODO: lengkapi rule 7 - 9
 
     elif res.startswith('me'):
-        # TODO: lengkapi rule 10 - 12
+        # TODO: lengkapi rule 10 - 11
 
         # TODO: jangan lupa ubah ke `elif`
+        # rule 12: mempe... --> mem-pe...
+        if res.startswith('mempe'):
+            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:2])
+
         # rule 13: mem{rV|V}... --> me-m{rV|V}... | me-p{rV|V}... (memrakarsa, memamerkan)
-        if (res.startswith('memr') and is_vowel(res[4])) or (res.startswith('mem') and is_vowel(res[3])):
+        elif (res.startswith('memr') and is_vowel(res[4])) or (res.startswith('mem') and is_vowel(res[3])):
             # if res[3] == 'r':
             case1 = 'm' + res[3:]
             case2 = 'p' + res[3:]
@@ -152,6 +156,10 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
         elif res.startswith('memp') and is_vowel(res[4]) and (res[4] != 'e'):
             res = 'p' + res[4:]
             res = remove_prefixes(res, kosakata, n_removed_suffixes + 1, res[:2])
+    
+    elif res.startswith('pe'):
+        # TODO: lengkapi rule 20 - 33
+        pass
 
     return res
 
@@ -163,7 +171,8 @@ def stem(kata, kosakata):
             (kata.startswith('be') and kata.endswith('i')) or
             (kata.startswith('be') and kata.endswith('lah')) or
             (kata.startswith('be') and kata.endswith('an')) or
-            # (kata.startswith('me') and kata.endswith('i')) or
+            (kata.startswith('me') and kata.endswith('an')) or
+            (kata.startswith('me') and kata.endswith('i')) or
             (kata.startswith('me') and kata.endswith('ku')) or
             (kata.startswith('di') and kata.endswith('i')) or
             (kata.startswith('pe') and kata.endswith('i')) or

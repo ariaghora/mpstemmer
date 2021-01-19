@@ -47,3 +47,9 @@ if __name__ == '__main__':
             print(f'error saat memroses `{kata}`')
     
     print(f'akurasi kata60: {float(n_benar) / len(kata_uji_std)}')
+
+
+    print('***')
+
+    print(stemmer.stem('mengemudi'))
+    print(stemmer.stem('memperjuangkan'))
