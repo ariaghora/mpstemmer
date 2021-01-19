@@ -164,8 +164,8 @@ class MPStemmer:
         Lapis 5: Hasil lapis 4 belum tentu memperoleh akar kata baku. Karena itu, jika sebelumnya kata telah
         terindikasi tidak baku, pastikan akar kata dibakukan. 
         """
-        if maybe_nonstandard:
-            res = self.ensure_standard_root(res, kosakata)
+        # if maybe_nonstandard:
+        res = self.ensure_standard_root(res, kosakata)
 
         """ 
         Lapis 6: Opsional. Pencarian lebih detail melalui similarity search, jika hasil dari lapis 5 tak ditemukan 
@@ -194,16 +194,41 @@ if __name__ == '__main__':
     kata_uji = [
         'nilaiku', 'berai', 'bukankah', 'bercerita', 'berlarian', 'belajar', 'beterbangan',  # be-
         'terangkat', 'terundung',  # te-
-        'mengasihani',  # me-
+        'mempunyai', 'memamerkan', 'memrakarsai', 'menengok', 'menasal', 'mengasihaninya',  # me-
 
         # tak baku
-        'ngancem', 'nyesel', 'ngelurusin', 'ngurangi', 'ngalamin', 'ngenes', 'ngancurin', 'ngakuin'
+        'ngancem', 'nyesel', 'ngelurusin', 'ngurangi', 'ngalamin', 'ngenes', 'ngancurin', 'ngakuin',
+        'ngadepin'
     ]
 
     stemmer = MPStemmer()
 
     for kata in kata_uji:
         print(f'{kata} -> {stemmer.stem_kata(kata, KOSAKATA)}')
+
+    kata_uji_std = [
+        'nerjang', 'nuduh', 'nerima', 'negur', 'mukul',
+        'mimpin', 'nyoba', 'nyiram', 'nyuruh', 'nyimpen',
+        'nyebrang', 'nganggep', 'ngamuk', 'ngambil', 'ngebuka',
+        'ngebantu', 'ngelepas', 'kebayang', 'keinjek', 'kekabul',
+        'kepergok', 'ketipu', 'keulang', 'kewujud', 'critain',
+        'betulin', 'manjain', 'gangguin', 'gantian', 'ikutan',
+        'musuhan', 'sabunan', 'temenan', 'tukeran', 'nanyain',
+        'nunjukin', 'mentingin', 'megangin', 'nyelametin', 'nyempetin',
+        'ngorbanin', 'ngadepin', 'ngebuktiin', 'ngewarnain', 'kedengeran',
+        'ketemuan', 'beneran', 'ginian', 'kawinan', 'mainan',
+        'parkiran', 'duluan', 'gendutan', 'karatan', 'palingan',
+        'sabaran', 'kebagusan', 'sanaan', 'cepetan', 'sepagian'
+    ]
+
+    print('\n==================\n')
+
+    for kata in kata_uji_std:
+        try:
+            akar = stemmer.stem_kata(kata, KOSAKATA, rigor=False)
+            print(f'{kata} -> {akar}')
+        except:
+            print(f'error saat memroses `{kata}`')
 
     '''
     Catatan kata ambigu:
