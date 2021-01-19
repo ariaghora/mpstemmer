@@ -35,7 +35,7 @@ You may refer to the refered article for the list of words.
 |**mpstemmer (rigor mode)**|91.67%|
 
 More benchmarks are to be added.
-The mpstemmer's performance at current early stage is somewhat low.
+The mpstemmer's performance at current early stage is so-so.
 Note that the rules are not completely implemented yet, so this affects directly to the performance.
 Gotta work harder :sleepy:.
 
