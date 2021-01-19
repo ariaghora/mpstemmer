@@ -43,9 +43,10 @@ Gotta work harder :sleepy:.
 - Putra, Rahardyan Bisma Setya, Ema Utami, and Suwanto Raharjo. "Optimalisasi Stemming Kata Berimbuhan Tidak Baku Pada Bahasa Indonesia Dengan Levenshtein Distance." Jurnal Informatika: Jurnal Pengembangan IT 3.2 (2018): 200-205.
 - Qulub, Mudawil, Ema Utami, and Andi Sunyoto. "Stemming Kata Berimbuhan Tidak Baku Bahasa Indonesia Menggunakan Algoritma Jaro-Winkler Distance." Creative Information Technology Journal 5.4 (2020): 254-263.
 
-## Known issues
+## Known issues and limitations
 - Implemented rules so far:
   - [x] "be-": rule 1-5 (completed)
   - [ ] "te-": rule 6
   - [ ]  "me-": rule 12-19
   - [ ]  "pe-": -
+- The nonstandard words are supposed to be "Java-centric" ("nyeselin", "ngenes", "sepagian", etc.). Stemming and correction for the words influenced by other local languages are not supported.
