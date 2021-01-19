@@ -36,6 +36,7 @@ You may refer to the refered article for the list of words.
 
 More benchmarks are to be added.
 The mpstemmer's performance at current early stage is somewhat low.
+Note that the rules are not completely implemented yet, so this affects directly to the performance.
 Gotta work harder :sleepy:.
 
 ## References
