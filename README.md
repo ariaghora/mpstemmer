@@ -31,12 +31,13 @@ You may refer to the refered article for the list of words.
 |------|---------------------|
 |Putra, et al. (2018)|96.6%|
 |Qulub, et al. (2018)|85%|
-|**mpstemmer**|88.33%|
-|**mpstemmer (rigor mode)**|91.67%|
+|**mpstemmer**|91.66%|
+|**mpstemmer (rigor mode)**|95%|
 
 More benchmarks are to be added.
-The mpstemmer's performance at current early stage is so-so.
+The mpstemmer's performance at current early stage is okay.
 Note that the rules are not completely implemented yet, so this affects directly to the performance.
+It can still be better.
 Gotta work harder :sleepy:.
 
 ## References
