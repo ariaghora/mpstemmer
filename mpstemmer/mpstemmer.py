@@ -6,7 +6,7 @@ from . import csstemmer
 
 
 class MPStemmer:
-    def __init__(self, kosakata=None):
+    def __init__(self, check_nonstandard=True, kosakata=None):
         path = os.path.dirname(__file__)
         default_dict_path = path + '/dictionaries/kbbi_words.txt'
         common_informal_dict_path = path + '/dictionaries/common_informal.json'
@@ -39,6 +39,8 @@ class MPStemmer:
         self.common_informal_dict = json.loads(open(common_informal_dict_path, 'r').read())
 
         self.memo = {}
+
+        self.check_nonstandard = check_nonstandard
 
     def get_top_n_matching(self, kata, n):
         """
@@ -188,30 +190,33 @@ class MPStemmer:
         """ 
         Lapis 3: cek kemungkinan kata tak baku terafiksasi. Jika ya, bakukan afiksasi.
         """
-        maybe_nonstandard = self.check_nonstandard_affixed(res)
-        if maybe_nonstandard:
-            res = self.fix_nonstandard_suffix(res)
-            if res in self.kosakata:
-                self.memo[kata] = res
-                return res
-            res = self.fix_nonstandard_prefix(res)
-            if res in self.kosakata:
-                self.memo[kata] = res
-                return res
+        if self.check_nonstandard:
+            maybe_nonstandard = self.check_nonstandard_affixed(res)
+            if maybe_nonstandard:
+                res = self.fix_nonstandard_suffix(res)
+                if res in self.kosakata:
+                    self.memo[kata] = res
+                    return res
+                res = self.fix_nonstandard_prefix(res)
+                if res in self.kosakata:
+                    self.memo[kata] = res
+                    return res
 
         """ 
         Lapis 4: Setelah lapis 3, ada kemungkinan kata masih terafiksasi. Lakukan stemming standar,
         karena afiksasi telah dibakukan di lapis 3. 
         """
-        res = self.standardify(res)
-        res = csstemmer.stem(res, self.kosakata)
+        if self.check_nonstandard:
+            res = self.standardify(res)
+            res = csstemmer.stem(res, self.kosakata)
 
         """ 
         Lapis 5: Hasil lapis 4 belum tentu memperoleh akar kata baku. Karena itu, jika sebelumnya kata telah
         terindikasi tidak baku, pastikan akar kata dibakukan. 
         """
         # if maybe_nonstandard:
-        res = self.ensure_standard_root(res, self.kosakata)
+        if self.check_nonstandard:
+            res = self.ensure_standard_root(res, self.kosakata)
 
         """ 
         Lapis 6: Opsional. Pencarian lebih detail melalui similarity search, jika hasil dari lapis 5 tak ditemukan 

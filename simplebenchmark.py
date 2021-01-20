@@ -1,7 +1,7 @@
 import mpstemmer
 
 if __name__ == '__main__':
-    stemmer = mpstemmer.MPStemmer()
+    stemmer = mpstemmer.MPStemmer(check_nonstandard=True)
 
     kata_uji_std = [   
         'nerjang', 'nuduh', 'nerima', 'negur', 'mukul', 
