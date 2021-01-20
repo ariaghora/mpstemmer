@@ -36,7 +36,7 @@ if __name__ == '__main__':
     n_benar = 0
     for i, kata in enumerate(kata_uji_std):
         try:
-            akar = stemmer.stem(kata, rigor=False)
+            akar = stemmer.stem(kata, rigor=True)
             pesan = "(OK)"
             if akar != kata_uji_std_jawaban[i]:
                 pesan = f'(Salah. Seharusnya "{kata_uji_std_jawaban[i]}")'

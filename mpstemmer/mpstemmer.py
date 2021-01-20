@@ -1,7 +1,6 @@
 import os
-import sys
 import json
-import editdistance
+import Levenshtein
 
 from . import csstemmer
 
@@ -46,7 +45,7 @@ class MPStemmer:
         :param n: jumlah kata termirip yang dicari
         :return: `list` berisi `n` kata yang paling mirip dengan `kata`
         """
-        dists = [{'dist': editdistance.eval(kata, x), 'word': x} for x in self.kosakata]
+        dists = [{'dist': Levenshtein.distance(kata, x), 'word': x} for x in self.kosakata]
         dists_sorted = sorted(dists, key=lambda x: x['dist'])
         return [x['word'] for x in dists_sorted[:n]]
 
