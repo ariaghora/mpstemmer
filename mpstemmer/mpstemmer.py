@@ -156,6 +156,9 @@ class MPStemmer:
         """
         res = kata
 
+        if len(res) <= 3:
+            return res
+
         """
         Jika kata sudah pernah di-stem sebelumnya, maka gunakan hasil yang sudah ada.
         """
