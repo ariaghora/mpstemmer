@@ -38,6 +38,8 @@ class MPStemmer:
 
         self.common_informal_dict = json.loads(open(common_informal_dict_path, 'r').read())
 
+        self.memo = {}
+
     def get_top_n_matching(self, kata, n):
         """
         Mencari n kata yang paling mirip dengan `kata`, diukur berdasarkan string edit distance
@@ -154,6 +156,13 @@ class MPStemmer:
         """
         res = kata
 
+        """
+        Jika kata sudah pernah di-stem sebelumnya, maka gunakan hasil yang sudah ada.
+        """
+        if res in self.memo:
+            return self.memo[res]
+
+
         res, fixed = self.fix_common(res)
         if fixed:
             return res
@@ -170,6 +179,7 @@ class MPStemmer:
         if prioritize_standard:
             res = csstemmer.stem(res, self.kosakata)
             if res in self.kosakata:
+                self.memo[kata] = res
                 return res
 
         """ 
@@ -179,9 +189,11 @@ class MPStemmer:
         if maybe_nonstandard:
             res = self.fix_nonstandard_suffix(res)
             if res in self.kosakata:
+                self.memo[kata] = res
                 return res
             res = self.fix_nonstandard_prefix(res)
             if res in self.kosakata:
+                self.memo[kata] = res
                 return res
 
         """ 
@@ -206,6 +218,7 @@ class MPStemmer:
         if rigor and maybe_nonstandard:
             res = self.get_top_1_matching(res)
 
+        self.memo[kata] = res
         return res
 
     def stem_kalimat(self, kalimat):
@@ -217,17 +230,8 @@ class MPStemmer:
         res = []
         words = kalimat.split(' ')
 
-        """
-        memoization untuk mempercepat pemrosesan kata yang sebelumnya
-        pernah diproses
-        """
-        memo = {}
         for kata in words:
-            if not(kata in memo):
-                root = self.stem(kata)
-                memo[kata] = root
-            else:
-                root = memo[kata]
+            root = self.stem(kata)
             res.append(root)
         return ' '.join(res)
 
