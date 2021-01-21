@@ -24,7 +24,9 @@ print(stemmer.stem_kalimat('ngelupain mantan tuh ngga susah kok bro'))
 
 ## Performance comparison
 
-On standard 60-words test cases, following is the performance comparison.
+### Nonstandard affixed words
+
+On 60-words test cases, following is the performance comparison.
 You may refer to the refered article for the list of words.
 
 |Method|Correct stemming rate|
