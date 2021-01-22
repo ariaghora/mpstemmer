@@ -24,7 +24,9 @@ print(stemmer.stem_kalimat('ngelupain mantan tuh ngga susah kok bro'))
 
 ## Performance comparison
 
-On standard 60-words test cases, following is the performance comparison.
+### Nonstandard affixed words
+
+On 60-words test cases, following is the performance comparison.
 You may refer to the refered article for the list of words.
 
 |Method|Correct stemming rate|
@@ -50,6 +52,6 @@ Gotta work harder :sleepy:.
 - Implemented rules so far:
   - [x] "be-": rule 1-5 (completed)
   - [ ] "te-": rule 6
-  - [ ]  "me-": rule 12-19
+  - [x]  "me-": rule 10-19 (completed)
   - [ ]  "pe-": -
 - The nonstandard words are supposed to be "Java-centric" ("nyeselin", "ngenes", "sepagian", etc.). Stemming and correction for the words influenced by other local languages are not supported.
