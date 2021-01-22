@@ -100,12 +100,17 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
     # TODO: lengkapi rule 7 - 9
 
     elif res.startswith('me'):
-        # TODO: lengkapi rule 10 - 11
+        # rule 10: me{l|r|w|y}V... --> me-{l|r|w|y}V...
+        if res.startswith(('mel', 'mer', 'mey')) and is_vowel(res[2]):
+            res = remove_prefixes(res[2:], kosakata, n_removed_suffixes + 1, res[:2])
 
-        # TODO: jangan lupa ubah ke `elif`
+        # rula 11: mem{b|f|v}... --> mem-{b|f|v}...
+        elif res.startswith(('memb', 'memf', 'memv')):
+            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:4])
+
         # rule 12: mempe... --> mem-pe...
-        if res.startswith('mempe'):
-            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:2])
+        elif res.startswith('mempe'):
+            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:5])
 
         # rule 13: mem{rV|V}... --> me-m{rV|V}... | me-p{rV|V}... (memrakarsa, memamerkan)
         elif (res.startswith('memr') and is_vowel(res[4])) or (res.startswith('mem') and is_vowel(res[3])):
@@ -113,26 +118,26 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
             case1 = 'm' + res[3:]
             case2 = 'p' + res[3:]
             if is_in_dict(case1, kosakata):
-                res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:2])
+                res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:4])
             elif is_in_dict(case2, kosakata):
-                res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:2])
+                res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:4])
 
         # rule 14:  men{c|d|j|z}... --> men-{c|d|j|z}...
         elif res.startswith(('menc', 'mend', 'menj', 'menz')):
-            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:2])
+            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:4])
 
         # rule 15: menV... --> me-nV... | me-tV...
         elif res.startswith('men') and is_vowel(res[3]):
             case1 = 'n' + res[3:]  # me-nV
             case2 = 't' + res[3:]  # me-tV
             if is_in_dict(case1, kosakata):
-                res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:2])
+                res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:3])
             elif is_in_dict(case2, kosakata):
-                res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:2])
+                res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:3])
 
         # rule 16: meng{g|h|q|k}... --> meng-{g|h|q|k}...
         elif res.startswith(('mengg', 'mengh', 'mengq', 'mengk')):
-            res = remove_prefixes(res[5:], kosakata, n_removed_suffixes + 1, res[:2])
+            res = remove_prefixes(res[5:], kosakata, n_removed_suffixes + 1, res[:5])
 
         # rule 17:  mengV... --> meng-V... | meng-kV...
         elif res.startswith('meng') and is_vowel(res[4]):
@@ -144,11 +149,11 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
 
             # meng-hV --> tambahan sub-rule, untuk akomodasi konstruk tak baku: ngancurin -> mengancurin ->menghancurin
             if is_in_dict(case1, kosakata):
-                res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:2])
+                res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:4])
             elif is_in_dict(case2, kosakata):
-                res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:2])
+                res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:4])
             elif is_in_dict(case3, kosakata):
-                res = remove_prefixes(case3, kosakata, n_removed_suffixes + 1, res[:2])
+                res = remove_prefixes(case3, kosakata, n_removed_suffixes + 1, res[:4])
 
         # rule 18: menyV... --> meny-sV...
         elif res.startswith('meny') and is_vowel(res[4]):
@@ -158,7 +163,7 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
         # rule 19: mempV... --> mem-pV... where V != 'e' (mempunyai)
         elif res.startswith('memp') and is_vowel(res[4]) and (res[4] != 'e'):
             res = 'p' + res[4:]
-            res = remove_prefixes(res, kosakata, n_removed_suffixes + 1, res[:2])
+            res = remove_prefixes(res, kosakata, n_removed_suffixes + 1, res[:4])
     
     elif res.startswith('pe'):
         # TODO: lengkapi rule 20 - 33
