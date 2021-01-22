@@ -33,6 +33,7 @@ class MPStemmer:
             self.kosakata.remove('soba')
             self.kosakata.remove('urang')
             self.kosakata.remove('urita')
+            self.kosakata.remove('gera')
         else:
             self.kosakata = kosakata
 
@@ -186,6 +187,8 @@ class MPStemmer:
             if res in self.kosakata:
                 self.memo[kata] = res
                 return res
+            else:
+                res = kata
 
         """ 
         Lapis 3: cek kemungkinan kata tak baku terafiksasi. Jika ya, bakukan afiksasi.
@@ -229,7 +232,7 @@ class MPStemmer:
         self.memo[kata] = res
         return res
 
-    def stem_kalimat(self, kalimat):
+    def stem_kalimat(self, kalimat, prioritize_standard=True, rigor=False):
         """
         :param kalimat: Kalimat (baris kata terpisah spasi) yang akan dibakukan.
         Sementara ini, karakter non-alfanumerik akan dihilangkan.
@@ -239,7 +242,7 @@ class MPStemmer:
         words = kalimat.split(' ')
 
         for kata in words:
-            root = self.stem(kata)
+            root = self.stem(kata, prioritize_standard, rigor)
             res.append(root)
         return ' '.join(res)
 

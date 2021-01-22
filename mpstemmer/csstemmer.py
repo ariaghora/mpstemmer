@@ -104,7 +104,7 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
         if res.startswith(('mel', 'mer', 'mey')) and is_vowel(res[2]):
             res = remove_prefixes(res[2:], kosakata, n_removed_suffixes + 1, res[:2])
 
-        # rula 11: mem{b|f|v}... --> mem-{b|f|v}...
+        # rule 11: mem{b|f|v}... --> mem-{b|f|v}...
         elif res.startswith(('memb', 'memf', 'memv')):
             res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:4])
 
@@ -137,7 +137,7 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
 
         # rule 16: meng{g|h|q|k}... --> meng-{g|h|q|k}...
         elif res.startswith(('mengg', 'mengh', 'mengq', 'mengk')):
-            res = remove_prefixes(res[5:], kosakata, n_removed_suffixes + 1, res[:5])
+            res = remove_prefixes(res[4:], kosakata, n_removed_suffixes + 1, res[:4])
 
         # rule 17:  mengV... --> meng-V... | meng-kV...
         elif res.startswith('meng') and is_vowel(res[4]):
@@ -166,8 +166,77 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
             res = remove_prefixes(res, kosakata, n_removed_suffixes + 1, res[:4])
     
     elif res.startswith('pe'):
-        # TODO: lengkapi rule 20 - 33
-        pass
+        # rule 20: pe{w|y}V... --> pe-{w|y}V...
+        if res.startswith(('pew', 'pey')) and is_vowel(res[3]):
+            res = res[2:]
+            res = remove_prefixes(res, kosakata, n_removed_suffixes + 1, res[:2])
+
+        # rule 21: perV... --> per-V... | pe-rV...
+        elif res.startswith('per') and is_vowel(res[3]):
+            case1 = res[3:]
+            case2 = res[2:]
+            if is_in_dict(case1, kosakata):
+                res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:3])
+            elif is_in_dict(case2, kosakata):
+                res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:2])
+
+        # rule 22: perCAP... --> per-CAP..., C != 'r', P != 'er'
+        # C, A, P = res[3], res[4], res[5:7]
+        elif (res[2] == 'r') and (res[3] != 'r') and is_consonant(res[3]) and (res[5:7] != 'er'):
+            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:3])
+
+        # rule 23: perCAerV... --> per-CAerV..., C != 'r' (perceraian)        
+        elif (res[2] == 'r') and (res[3] != 'r') and is_consonant(res[3]):
+            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:3])
+        
+        # rule 24: pem{b|f|v}... --> pem-{b|f|v}...
+        elif res.startswith(('pemb', 'pemf', 'pemv')):
+            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:4])
+
+        # rule 25: pem{rV|V}... --> pe-m{rV|V}... | pe-p{rV|V}... (pemrakarsa, pemamerkan)
+        elif (res.startswith('pemr') and is_vowel(res[4])) or (res.startswith('pem') and is_vowel(res[3])):
+            # if res[3] == 'r':
+            case1 = 'm' + res[3:]
+            case2 = 'p' + res[3:]
+            if is_in_dict(case1, kosakata):
+                res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:4])
+            elif is_in_dict(case2, kosakata):
+                res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:4])
+
+        # rule 26:  pen{c|d|j|z}... --> pen-{c|d|j|z}...
+        elif res.startswith(('penc', 'pend', 'penj', 'penz')):
+            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:4])
+
+        # rule 27: penV... --> pe-nV... | pe-tV...
+        elif res.startswith('pen') and is_vowel(res[3]):
+            case1 = 'n' + res[3:]  # pe-nV
+            case2 = 't' + res[3:]  # pe-tV
+            if is_in_dict(case1, kosakata):
+                res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:3])
+            elif is_in_dict(case2, kosakata):
+                res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:3])
+
+        # rule 28: peng{g|h|q}... --> peng-{g|h|q|k}...
+        elif res.startswith(('pengg', 'pengh', 'pengq', 'pengk')):
+            res = remove_prefixes(res[4:], kosakata, n_removed_suffixes + 1, res[:4])
+
+        # rule 29:  pengV... --> peng-V... | peng-kV...
+        elif res.startswith('peng') and is_vowel(res[4]):
+            case1 = res[4:]  # peng-V
+            case2 = 'k' + res[4:]  # peng-kV
+            case3 = 'h' + res[4:]
+
+            # peng-hV --> tambahan sub-rule, untuk akomodasi konstruk tak baku: pengancur ->penghancur
+            if is_in_dict(case1, kosakata):
+                res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:4])
+            elif is_in_dict(case2, kosakata):
+                print('case 2 ', case2)
+                res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:4])
+            elif is_in_dict(case3, kosakata):
+                res = remove_prefixes(case3, kosakata, n_removed_suffixes + 1, res[:4])
+
+        # TODO: lengkapi rule 30 - 33
+
 
     return res
 
@@ -179,8 +248,9 @@ def stem(kata, kosakata):
             (kata.startswith('be') and kata.endswith('i')) or
             (kata.startswith('be') and kata.endswith('lah')) or
             (kata.startswith('be') and kata.endswith('an')) or
+            # (kata.startswith('pe') and kata.endswith('an')) or
             (kata.startswith('me') and kata.endswith('an')) or
-            (kata.startswith('me') and kata.endswith('i')) or
+            # (kata.startswith('me') and kata.endswith('i')) or
             (kata.startswith('me') and kata.endswith('ku')) or
             (kata.startswith('di') and kata.endswith('i')) or
             (kata.startswith('se') and kata.endswith('an')) or

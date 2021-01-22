@@ -51,8 +51,17 @@ if __name__ == '__main__':
 
     print('***')
 
-    print(stemmer.stem('mengemudi'))
-    print(stemmer.stem('memperjuangkan'))
-    print(stemmer.stem('semenyeramkan'))
-
-    print(stemmer.stem_kalimat('ngelupain mantan tuh ngga susah kok bro'))
+    print(stemmer.stem('mengadili'))
+    # print(stemmer.stem('memperjuangkan'))
+    # print(stemmer.stem('semenyeramkan'))
+    # print(stemmer.stem('jokowi'))
+    # print(stemmer.stem('pewayangan'))
+    # print(stemmer.stem('perawan'))
+    # print(stemmer.stem('perumahan'))
+    print(stemmer.stem('peraturan'))
+    print(stemmer.stem('perceraian'))
+    print(stemmer.stem('pembaruan'))
+    print(stemmer.stem('pemvideo'))
+    print(stemmer.stem('pemrakarsa'))
+    print(stemmer.stem_kalimat('penerjemahan penggerak penghargaan'))
+    print(stemmer.stem_kalimat('pengadilan pengkristalan'))
