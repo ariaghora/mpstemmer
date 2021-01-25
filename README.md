@@ -53,5 +53,5 @@ Gotta work harder :sleepy:.
   - [x] "be-": rule 1-5 (completed)
   - [x] "te-": rule 6-9 (completed)
   - [x]  "me-": rule 10-19 (completed)
-  - [ ]  "pe-": rule 20-29 (completed)
+  - [ ]  "pe-": rule 20-29 
 - The nonstandard words are supposed to be "Java-centric" ("nyeselin", "ngenes", "sepagian", etc.). Stemming and correction for the words influenced by other local languages are not supported.
