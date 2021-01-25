@@ -33,7 +33,7 @@ You may refer to the refered article for the list of words.
 |------|---------------------|
 |Putra, et al. (2018)|96.6%|
 |Qulub, et al. (2018)|85%|
-|**mpstemmer**|91.66%|
+|**mpstemmer**|93.33%|
 |**mpstemmer (rigorous mode)**|95%|
 
 More benchmarks are to be added.
