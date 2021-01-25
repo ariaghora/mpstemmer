@@ -26,6 +26,17 @@ print(stemmer.stem_kalimat('ngelupain mantan tuh ngga susah kok bro'))
 
 Please refer to this [page](https://github.com/ariaghora/mpstemmer/blob/master/benchmark_dataset/benchmark_result.md) for an in-depth comparison against existing works.
 
+## Citation
+
+```
+@Misc{PrabonoMpstemmer2020,
+title = {Mpstemmer: a multi-phase stemmer for standard and nonstandard Indonesian words},
+author = {Prabono, Aria Ghora},
+year = {2020},
+url = {https://github.com/ariaghora/mpstemmer}
+}
+```
+
 ## References
 
 - Adriani, M., Asian, J., Nazief, B., Tahaghoghi, S.M. and Williams, H.E., 2007. Stemming Indonesian: A confix-stripping approach. ACM Transactions on Asian Language Information Processing (TALIP), 6(4), pp.1-33.
