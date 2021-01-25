@@ -51,7 +51,7 @@ Gotta work harder :sleepy:.
 ## Known issues and limitations
 - Implemented rules so far:
   - [x] "be-": rule 1-5 (completed)
-  - [ ] "te-": rule 6
+  - [x] "te-": rule 6-9 (completed)
   - [x]  "me-": rule 10-19 (completed)
-  - [ ]  "pe-": -
+  - [ ]  "pe-": rule 20-29 (completed)
 - The nonstandard words are supposed to be "Java-centric" ("nyeselin", "ngenes", "sepagian", etc.). Stemming and correction for the words influenced by other local languages are not supported.
