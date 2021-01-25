@@ -67,18 +67,18 @@ if __name__ == '__main__':
     stemmer_pysastrawi = factory.create_stemmer()
 
     n_benar = 0
+    txt = "|No|Word|Stemming Result|Remark|\n"
+    txt += "|--|----|---------------|------|\n"
     for i, kata in enumerate(kata_uji_std):
-        try:
-            akar = stemmer_mpstemmer.stem(kata, rigor=False)
-            pesan = "(OK)"
-            if akar != kata_uji_std_jawaban[i]:
-                pesan = f'(Salah. Seharusnya "{kata_uji_std_jawaban[i]}")'
-            else:
-                n_benar += 1
-            print(f'{i + 1}. {kata} -> {akar} {pesan}')
-        except:
-            print(f'error saat memroses `{kata}`')
+        akar = stemmer_mpstemmer.stem(kata, rigor=False)
+        pesan = "Correct"
+        if akar != kata_uji_std_jawaban[i]:
+            pesan = f'Wrong. It should be "{kata_uji_std_jawaban[i]}"'
+        else:
+            n_benar += 1
+        txt += (f'| {i + 1} | {kata} | {akar} | {pesan} |\n')
 
+    print(txt)
     print(f'akurasi kata60: {float(n_benar) / len(kata_uji_std)}')
 
     print('***')
