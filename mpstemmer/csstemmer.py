@@ -56,7 +56,7 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
     if (is_in_dict(res, kosakata)) or (len(res) <= 5):
         return res
 
-    if (res[:2] in ['di', 'ke', 'se', 'ku']) and (res[:2] != last_removed) and (n_removed_suffixes < 3):
+    elif (res[:2] in ['di', 'ke', 'se', 'ku']) and (res[:2] != last_removed) and (n_removed_suffixes < 3):
         # simple prefix, just remove it
         res = remove_prefixes(res[2:], kosakata, n_removed_suffixes + 1, res[:2])
 
@@ -97,7 +97,17 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
             elif is_in_dict(case2, kosakata):
                 res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:2])
 
-    # TODO: lengkapi rule 7 - 9
+        # rule 7: terCP... --> ter-CP... where C!=‘r’ and P!=‘er’
+        elif res.startswith('ter') and (res[3] != 'r') and (res[4:6] != 'er'):
+            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:3])
+
+        # rule 8: terCer... --> ter-Cer... where C!=‘r’
+        elif res.startswith('ter') and (res[3] != 'r') and (res[4:6] == 'er'):
+            res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:3])
+
+        # rule 9: teC1erC2... --> te-C1erC2... where C!=‘r’
+        elif (res[2] != 'r') and (res[3:5] == 'er') and (is_consonant(res[5])):
+            res = remove_prefixes(res[2:], kosakata, n_removed_suffixes + 1, res[:2])
 
     elif res.startswith('me'):
         # rule 10: me{l|r|w|y}V... --> me-{l|r|w|y}V...
@@ -164,7 +174,7 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
         elif res.startswith('memp') and is_vowel(res[4]) and (res[4] != 'e'):
             res = 'p' + res[4:]
             res = remove_prefixes(res, kosakata, n_removed_suffixes + 1, res[:4])
-    
+
     elif res.startswith('pe'):
         # rule 20: pe{w|y}V... --> pe-{w|y}V...
         if res.startswith(('pew', 'pey')) and is_vowel(res[3]):
@@ -188,7 +198,7 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
         # rule 23: perCAerV... --> per-CAerV..., C != 'r' (perceraian)        
         elif (res[2] == 'r') and (res[3] != 'r') and is_consonant(res[3]):
             res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:3])
-        
+
         # rule 24: pem{b|f|v}... --> pem-{b|f|v}...
         elif res.startswith(('pemb', 'pemf', 'pemv')):
             res = remove_prefixes(res[3:], kosakata, n_removed_suffixes + 1, res[:4])
@@ -237,33 +247,27 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
 
         # TODO: lengkapi rule 30 - 33
 
-
     return res
 
 
 def stem(kata, kosakata):
-    # in some rare occassions, we need to remove prefixes before suffixes
-    # to reduce ambiguities
-    if (
-            (kata.startswith('be') and kata.endswith('i')) or
-            (kata.startswith('be') and kata.endswith('lah')) or
-            (kata.startswith('be') and kata.endswith('an')) or
-            # (kata.startswith('pe') and kata.endswith('an')) or
-            (kata.startswith('me') and kata.endswith('an')) or
-            # (kata.startswith('me') and kata.endswith('i')) or
-            (kata.startswith('me') and kata.endswith('ku')) or
-            (kata.startswith('di') and kata.endswith('i')) or
-            (kata.startswith('se') and kata.endswith('an')) or
-            (kata.startswith('pe') and kata.endswith('i')) or
-            (kata.startswith('te') and kata.endswith('i'))
-    ):
-        res = remove_prefixes(kata, kosakata, 0, '')
-        res = remove_inflectional_suffixes(res, kosakata)
-        res = remove_derivational_suffix(res, kosakata)
-    else:
-        # regular precedence
-        res = remove_inflectional_suffixes(kata, kosakata)
-        res = remove_derivational_suffix(res, kosakata)
-        res = remove_prefixes(res, kosakata, 0, '')
+    res = remove_inflectional_suffixes(kata, kosakata)
+    res = remove_derivational_suffix(res, kosakata)
+    res = remove_prefixes(res, kosakata, 0, '')
+    if is_in_dict(res, kosakata):
+        return res
 
+    """
+    Untuk beberapa kasus, prefix harus dibuang terlebih dahulu.
+    Jika pengecekan di atas gagal, maka coba cek lagi dengan membuang prefix, kemudian suffix.
+    """
+    res = remove_prefixes(kata, kosakata, 0, '')
+    res = remove_inflectional_suffixes(res, kosakata)
+    res = remove_derivational_suffix(res, kosakata)
+
+    """
+    Di algoritma original, sebelum nilai fungsi dikembalikan, perlu dilakukan lookup.
+    Namun, mpstemmer tidak melakukan itu walau `res` terakhir tidak ada pada kamus, karena masih akan ada proses
+    lanjutan (perbaikan kata tak baku).
+    """
     return res

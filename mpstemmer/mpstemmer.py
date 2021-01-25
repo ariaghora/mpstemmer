@@ -14,8 +14,8 @@ class MPStemmer:
         if kosakata == None:
             wordlist = open(default_dict_path, 'r').read().split('\n')
             self.kosakata = {
-                    kata.lower() for kata in wordlist
-                }
+                kata.lower() for kata in wordlist
+            }
 
             '''
             Catatan kata ambigu:
@@ -71,7 +71,7 @@ class MPStemmer:
             res = abb_dict[kata]
             fixed = True
             return res, fixed
-        
+
         return res, fixed
 
     @staticmethod
@@ -144,8 +144,8 @@ class MPStemmer:
         res = kata
         # buang suffix sederhana
         if res.endswith('in'):
-            res = res[:-2] 
-        # elif res.endswith('i'):
+            res = res[:-2]
+            # elif res.endswith('i'):
         #     res = res[:-1]
         return res
 
@@ -167,7 +167,6 @@ class MPStemmer:
         """
         if res in self.memo:
             return self.memo[res]
-
 
         res, fixed = self.fix_common(res)
         if fixed:
@@ -230,7 +229,10 @@ class MPStemmer:
             res = self.get_top_1_matching(res)
 
         self.memo[kata] = res
-        return res
+        if res in self.kosakata:
+            return res
+        else:
+            return kata
 
     def stem_kalimat(self, kalimat, prioritize_standard=True, rigor=False):
         """
@@ -262,5 +264,3 @@ if __name__ == '__main__':
 
     for kata in kata_uji:
         print(f'{kata} -> {stemmer.stem(kata)}')
-
-

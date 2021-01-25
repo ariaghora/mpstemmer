@@ -65,3 +65,4 @@ if __name__ == '__main__':
     print(stemmer.stem('pemrakarsa'))
     print(stemmer.stem_kalimat('penerjemahan penggerak penghargaan'))
     print(stemmer.stem_kalimat('pengadilan pengkristalan'))
+    print(stemmer.stem('terjebak'))
