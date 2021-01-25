@@ -35,6 +35,7 @@ Following reports are based on the result of running `simplebenchmark.py`.
 |**mpstemmer** (skip checking nonstandard words)|1.62 ms|0.50 ms|0.48 ms|
 
 - Refer to `benchmark_dataset` folder for the reference of used data
+- Lower is better
 
 ### Nonstandard affixed words
 
