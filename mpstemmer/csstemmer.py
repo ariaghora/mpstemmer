@@ -40,13 +40,13 @@ def remove_derivational_suffix(kata, kosakata):
 
     if res.endswith('i'):
         res = kata[:-1]
-        res = remove_derivational_suffix(res, kosakata)
+        # res = remove_derivational_suffix(res, kosakata)
     elif kata.endswith('kan'):
         res = kata[:-3]
-        res = remove_derivational_suffix(res, kosakata)
-    elif kata.endswith('an'):
+        # res = remove_derivational_suffix(res, kosakata)
+    elif kata.endswith(('an')):
         res = kata[:-2]
-        res = remove_derivational_suffix(res, kosakata)
+        # res = remove_derivational_suffix(res, kosakata)
     return res
 
 
@@ -111,7 +111,7 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
 
     elif res.startswith('me'):
         # rule 10: me{l|r|w|y}V... --> me-{l|r|w|y}V...
-        if res.startswith(('mel', 'mer', 'mey')) and is_vowel(res[2]):
+        if res.startswith(('mel', 'mer', 'mew', 'mey')) and is_vowel(res[3]):
             res = remove_prefixes(res[2:], kosakata, n_removed_suffixes + 1, res[:2])
 
         # rule 11: mem{b|f|v}... --> mem-{b|f|v}...
@@ -240,7 +240,6 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
             if is_in_dict(case1, kosakata):
                 res = remove_prefixes(case1, kosakata, n_removed_suffixes + 1, res[:4])
             elif is_in_dict(case2, kosakata):
-                print('case 2 ', case2)
                 res = remove_prefixes(case2, kosakata, n_removed_suffixes + 1, res[:4])
             elif is_in_dict(case3, kosakata):
                 res = remove_prefixes(case3, kosakata, n_removed_suffixes + 1, res[:4])
@@ -251,19 +250,29 @@ def remove_prefixes(kata, kosakata, n_removed_suffixes, last_removed):
 
 
 def stem(kata, kosakata):
+    """
+    Untuk beberapa kasus, prefix harus dibuang terlebih dahulu.
+    """
+    if (
+            (kata.startswith('be') and kata.endswith(('lah', 'an', 'i'))) or
+            (kata.startswith('me') and kata.endswith('i')) or
+            (kata.startswith('di') and kata.endswith('i')) or
+            (kata.startswith('pe') and kata.endswith('i')) or
+            (kata.startswith('te') and kata.endswith('i'))
+    ):
+        res = remove_prefixes(kata, kosakata, 0, '')
+        res = remove_inflectional_suffixes(res, kosakata)
+        res = remove_derivational_suffix(res, kosakata)
+
+        if is_in_dict(res, kosakata):
+            return res
+
     res = remove_inflectional_suffixes(kata, kosakata)
     res = remove_derivational_suffix(res, kosakata)
     res = remove_prefixes(res, kosakata, 0, '')
+
     if is_in_dict(res, kosakata):
         return res
-
-    """
-    Untuk beberapa kasus, prefix harus dibuang terlebih dahulu.
-    Jika pengecekan di atas gagal, maka coba cek lagi dengan membuang prefix, kemudian suffix.
-    """
-    res = remove_prefixes(kata, kosakata, 0, '')
-    res = remove_inflectional_suffixes(res, kosakata)
-    res = remove_derivational_suffix(res, kosakata)
 
     """
     Di algoritma original, sebelum nilai fungsi dikembalikan, perlu dilakukan lookup.

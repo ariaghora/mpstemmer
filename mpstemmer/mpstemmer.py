@@ -1,5 +1,6 @@
 import os
 import json
+import re
 import Levenshtein
 
 from . import csstemmer
@@ -168,14 +169,14 @@ class MPStemmer:
         if res in self.memo:
             return self.memo[res]
 
-        res, fixed = self.fix_common(res)
-        if fixed:
-            return res
-
         """ 
         Lapis 1: cari di KBBI (eksak). 
         """
         if res in self.kosakata:
+            return res
+
+        res, fixed = self.fix_common(res)
+        if fixed:
             return res
 
         """
@@ -195,40 +196,40 @@ class MPStemmer:
         if self.check_nonstandard:
             maybe_nonstandard = self.check_nonstandard_affixed(res)
             if maybe_nonstandard:
+
                 res = self.fix_nonstandard_suffix(res)
                 if res in self.kosakata:
                     self.memo[kata] = res
                     return res
+
                 res = self.fix_nonstandard_prefix(res)
                 if res in self.kosakata:
                     self.memo[kata] = res
                     return res
 
-        """ 
-        Lapis 4: Setelah lapis 3, ada kemungkinan kata masih terafiksasi. Lakukan stemming standar,
-        karena afiksasi telah dibakukan di lapis 3. 
-        """
-        if self.check_nonstandard:
+            """ 
+            Lapis 4: Setelah lapis 3, ada kemungkinan kata masih terafiksasi. Lakukan stemming standar,
+            karena afiksasi telah dibakukan di lapis 3. 
+            """
             res = self.standardify(res)
             res = csstemmer.stem(res, self.kosakata)
 
-        """ 
-        Lapis 5: Hasil lapis 4 belum tentu memperoleh akar kata baku. Karena itu, jika sebelumnya kata telah
-        terindikasi tidak baku, pastikan akar kata dibakukan. 
-        """
-        # if maybe_nonstandard:
-        if self.check_nonstandard:
+            """ 
+            Lapis 5: Hasil lapis 4 belum tentu memperoleh akar kata baku. Karena itu, jika sebelumnya kata telah
+            terindikasi tidak baku, pastikan akar kata dibakukan. 
+            """
             res = self.ensure_standard_root(res, self.kosakata)
 
-        """ 
-        Lapis 6: Opsional. Pencarian lebih detail melalui similarity search, jika hasil dari lapis 5 tak ditemukan 
-        di kosakata. 
-        PERINGATAN!!! Ini bisa memakan banyak waktu. 
-        """
-        if rigor and maybe_nonstandard:
-            res = self.get_top_1_matching(res)
+            """ 
+            Lapis 6: Opsional. Pencarian lebih detail melalui similarity search, jika hasil dari lapis 5 tak ditemukan 
+            di kosakata. 
+            PERINGATAN!!! Ini bisa memakan banyak waktu. 
+            """
+            if rigor and maybe_nonstandard:
+                res = self.get_top_1_matching(res)
 
         self.memo[kata] = res
+        # print('final res: ', res)
         if res in self.kosakata:
             return res
         else:
@@ -241,7 +242,8 @@ class MPStemmer:
         :return: Kalimat berisi kata-kata yang sudah dibakukan.
         """
         res = []
-        words = kalimat.split(' ')
+        words = kalimat.lower().split(' ')
+
 
         for kata in words:
             root = self.stem(kata, prioritize_standard, rigor)
