@@ -24,6 +24,19 @@ print(stemmer.stem_kalimat('ngelupain mantan tuh ngga susah kok bro'))
 
 ## Performance comparison
 
+### Standard affixed words
+
+Following reports are based on the result of running `simplebenchmark.py`.
+
+|Method|1 trial|100 trials (avg. per trial)|1000 trials (avg. per trial)|
+|------|-------|---------------------------|----------------------------|
+|PySastrawi|55.56 ms|1.56 ms|1.07 ms|
+|**mpstemmer**|1.95 ms|0.52 ms|0.50 ms|
+|**mpstemmer** (skip checking nonstandard words)|1.62 ms|0.50 ms|0.48 ms|
+
+- Refer to `benchmark_dataset` folder for the reference of used data
+- Lower is better
+
 ### Nonstandard affixed words
 
 On 60-words test cases, following is the performance comparison.
@@ -33,14 +46,14 @@ You may refer to the refered article for the list of words.
 |------|---------------------|
 |Putra, et al. (2018)|96.6%|
 |Qulub, et al. (2018)|85%|
-|**mpstemmer**|91.66%|
-|**mpstemmer (rigor mode)**|95%|
+|**mpstemmer**|93.33%|
+|**mpstemmer** (rigorous mode)|95%|
 
-More benchmarks are to be added.
-The mpstemmer's performance at current early stage is okay.
-Note that the rules are not completely implemented yet, so this affects directly to the performance.
-It can still be better.
-Gotta work harder :sleepy:.
+- Other than mpstemmer, the scores are based on reported number in each paper
+- More benchmarks are to be added.
+- The mpstemmer's performance at current early stage is okay.
+- Mpstemmer (non-rigorous) works without computing any distance, so it is way faster than the other three.
+- Gotta work harder to improve the performance :sleepy:.
 
 ## References
 
@@ -51,7 +64,7 @@ Gotta work harder :sleepy:.
 ## Known issues and limitations
 - Implemented rules so far:
   - [x] "be-": rule 1-5 (completed)
-  - [ ] "te-": rule 6
+  - [x] "te-": rule 6-9 (completed)
   - [x]  "me-": rule 10-19 (completed)
-  - [ ]  "pe-": -
+  - [ ]  "pe-": rule 20-29 
 - The nonstandard words are supposed to be "Java-centric" ("nyeselin", "ngenes", "sepagian", etc.). Stemming and correction for the words influenced by other local languages are not supported.
