@@ -52,8 +52,8 @@ You may refer to the refered article for the list of words.
 - Other than mpstemmer, the scores are based on reported number in each paper
 - More benchmarks are to be added.
 - The mpstemmer's performance at current early stage is okay.
-- Note that the rules are not completely implemented yet, so this affects directly to the performance. It can still be better.
-Gotta work harder :sleepy:.
+- Mpstemmer (non-rigorous) works without computing any distance, so it is way faster than the other three.
+- Gotta work harder to improve the performance :sleepy:.
 
 ## References
 
