@@ -24,6 +24,18 @@ print(stemmer.stem_kalimat('ngelupain mantan tuh ngga susah kok bro'))
 
 ## Performance comparison
 
+### Standard affixed words
+
+Following reports are based on the result of running `simplebenchmark.py`.
+
+|Method|1 trial|100 trials (avg. per trial)|1000 trials (avg. per trial)|
+|------|-------|---------------------------|----------------------------|
+|PySastrawi|55.56 ms|1.56 ms|1.07 ms|
+|**mpstemmer**|1.95 ms|0.52 ms|0.50 ms|
+|**mpstemmer** (skip checking nonstandard words)|1.62 ms|0.50 ms|0.48 ms|
+
+- Refer to `benchmark_dataset` folder for the reference of used data
+
 ### Nonstandard affixed words
 
 On 60-words test cases, following is the performance comparison.
@@ -34,12 +46,12 @@ You may refer to the refered article for the list of words.
 |Putra, et al. (2018)|96.6%|
 |Qulub, et al. (2018)|85%|
 |**mpstemmer**|93.33%|
-|**mpstemmer (rigorous mode)**|95%|
+|**mpstemmer** (rigorous mode)|95%|
 
-More benchmarks are to be added.
-The mpstemmer's performance at current early stage is okay.
-Note that the rules are not completely implemented yet, so this affects directly to the performance.
-It can still be better.
+- Other than mpstemmer, the scores are based on reported number in each paper
+- More benchmarks are to be added.
+- The mpstemmer's performance at current early stage is okay.
+- Note that the rules are not completely implemented yet, so this affects directly to the performance. It can still be better.
 Gotta work harder :sleepy:.
 
 ## References
