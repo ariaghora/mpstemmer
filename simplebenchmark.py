@@ -81,6 +81,18 @@ if __name__ == '__main__':
     print(txt)
     print(f'akurasi kata60: {float(n_benar) / len(kata_uji_std)}')
 
+    n_benar = 0
+    txt = "|No|Word|Stemming Result|Remark|\n"
+    txt += "|--|----|---------------|------|\n"
+    for i, kata in enumerate(kata_uji_std):
+        akar = stemmer_pysastrawi.stem(kata)
+        pesan = "Correct"
+        if akar != kata_uji_std_jawaban[i]:
+            pesan = f'Wrong. It should be "{kata_uji_std_jawaban[i]}"'
+        else:
+            n_benar += 1
+    print(f'akurasi kata60 pysastrawi: {float(n_benar) / len(kata_uji_std)}')
+
     print('***')
 
     import re
