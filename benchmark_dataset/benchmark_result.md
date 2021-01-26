@@ -21,6 +21,7 @@ You may refer to the refered article for the list of words.
 
 |Method|Correct stemming rate|
 |------|---------------------|
+|PySastrawi|33.33%|
 |Putra, et al. (2018)|96.6%|
 |Qulub, et al. (2018)|85%|
 |**mpstemmer** (non-rigorous) |90%|

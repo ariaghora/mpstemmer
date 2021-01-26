@@ -24,7 +24,7 @@ print(stemmer.stem_kalimat('ngelupain mantan tuh ngga susah kok bro'))
 
 ## Performance comparison
 
-Please refer to this [page](https://github.com/ariaghora/mpstemmer/blob/master/benchmark_dataset/benchmark_result.md) for an in-depth comparison against existing works.
+Please refer to this [page](https://github.com/ariaghora/mpstemmer/blob/master/benchmark_dataset/benchmark_result.md) for an in-depth comparison against PySastrawi and other existing works.
 
 ## Citation
 
