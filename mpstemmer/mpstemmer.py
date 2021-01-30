@@ -69,11 +69,6 @@ class MPStemmer:
         fixed = False
         abb_dict = self.common_informal_dict
 
-        try:
-            print('asdasdasd ', abb_dict[res])
-        except:
-            pass
-
         if kata in abb_dict.keys():
             res = abb_dict[kata]
             fixed = True
