@@ -68,6 +68,12 @@ class MPStemmer:
         res = kata
         fixed = False
         abb_dict = self.common_informal_dict
+
+        try:
+            print('asdasdasd ', abb_dict[res])
+        except:
+            pass
+
         if kata in abb_dict.keys():
             res = abb_dict[kata]
             fixed = True
@@ -160,8 +166,8 @@ class MPStemmer:
         """
         res = kata
 
-        if len(res) <= 3:
-            return res
+        # if len(res) <= 3:
+        #     return res
 
         """
         Jika kata sudah pernah di-stem sebelumnya, maka gunakan hasil yang sudah ada.
