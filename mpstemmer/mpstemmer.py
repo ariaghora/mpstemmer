@@ -166,8 +166,18 @@ class MPStemmer:
         """
         res = kata
 
-        # if len(res) <= 3:
-        #     return res
+        """
+        Coba perbaiki kata nonstandar yang biasa ditemui. Biasanya berupa singkatan/saltik.
+        """
+        res, fixed = self.fix_common(res)
+        if fixed:
+            return res
+
+        """
+        Jangan stem jika kata pendek.
+        """
+        if len(res) <= 3:
+            return res
 
         """
         Jika kata sudah pernah di-stem sebelumnya, maka gunakan hasil yang sudah ada.
@@ -179,10 +189,6 @@ class MPStemmer:
         Lapis 1: cari di KBBI (eksak). 
         """
         if res in self.kosakata:
-            return res
-
-        res, fixed = self.fix_common(res)
-        if fixed:
             return res
 
         """
